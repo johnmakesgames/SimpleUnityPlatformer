@@ -6,12 +6,15 @@ public class PlayerAnimController : MonoBehaviour
 {
     public int movementSpeed;
     public bool grounded;
+    public bool hasSword;
 
     [SerializeField]
     Animator animationController;
 
     public void Start()
     {
+        hasSword = true;
+
         if (animationController == null)
         {
             animationController = this.GetComponent<Animator>();
@@ -31,11 +34,15 @@ public class PlayerAnimController : MonoBehaviour
 
     public void ThrowSword()
     {
+        hasSword = false;
+        animationController.SetBool("HasSword", hasSword);
         animationController.SetTrigger("ThrowSword");
     }
 
     public void PickupSword()
     {
+        hasSword = true;
+        animationController.SetBool("HasSword", hasSword);
         animationController.SetTrigger("PickupSword");
     }
 

@@ -4,20 +4,21 @@ using UnityEngine;
 
 public class GroundedKnower : MonoBehaviour
 {
-    public bool IsGrounded
+    public bool IsGrounded;
+
+    public void OnTriggerStay2D(Collider2D collision)
     {
-        get
+        if (collision.gameObject != this.gameObject)
         {
-            Transform transform = this.GetComponent<Transform>();
-            RaycastHit2D hit = Physics2D.Linecast(new Vector2(transform.position.x, transform.position.y), 
-                                new Vector2(transform.position.x, transform.position.y - 0.1f) + new Vector2(0, -0.01f), 0);
+            IsGrounded = true;
+        }
+    }
 
-            if (hit.collider != null)
-            {
-                return true;
-            }
-
-            return false;
+    public void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject != this.gameObject)
+        {
+            IsGrounded = false;
         }
     }
 }
