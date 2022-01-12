@@ -13,6 +13,9 @@ public class PlayerMovementHandler : MonoBehaviour
 
     public bool facingRight;
 
+    private float jumpCooldown = 1;
+    private float timeSinceJump = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,15 +35,18 @@ public class PlayerMovementHandler : MonoBehaviour
             this.GetComponent<Rigidbody2D>().AddForce(new Vector2(-10, 0));
             facingRight = false;
         }
+
+        if (Input.GetKey(KeyCode.Space) && this.GetComponent<GroundedKnower>().IsGrounded && timeSinceJump > jumpCooldown)
+        {
+            this.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, 150));
+            timeSinceJump = 0;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.Space) && this.GetComponent<GroundedKnower>().IsGrounded)
-        {
-            this.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, 40));
-        }
+        timeSinceJump += Time.deltaTime;
 
         if (Input.GetMouseButtonDown(0) && this.GetComponent<PlayerAnimController>().hasSword)
         {
