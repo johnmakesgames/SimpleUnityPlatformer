@@ -24,23 +24,26 @@ public class PlayerMovementHandler : MonoBehaviour
 
     void FixedUpdate()
     {
+        var rb = this.GetComponent<Rigidbody2D>();
         if (Input.GetKey(KeyCode.D))
         {
-            this.GetComponent<Rigidbody2D>().AddForce(new Vector2(10, 0));
+            rb.AddForce(new Vector2(10, 0));
             facingRight = true;
         }
 
         if (Input.GetKey(KeyCode.A))
         {
-            this.GetComponent<Rigidbody2D>().AddForce(new Vector2(-10, 0));
+            rb.AddForce(new Vector2(-10, 0));
             facingRight = false;
         }
 
         if (Input.GetKey(KeyCode.Space) && this.GetComponent<GroundedKnower>().IsGrounded && timeSinceJump > jumpCooldown)
         {
-            this.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, 150));
+            rb.AddForce(new Vector2(0, 150));
             timeSinceJump = 0;
         }
+
+        rb.velocity = Vector2.ClampMagnitude(rb.velocity, 3.0f);
     }
 
     // Update is called once per frame
@@ -48,9 +51,12 @@ public class PlayerMovementHandler : MonoBehaviour
     {
         timeSinceJump += Time.deltaTime;
 
-        if (Input.GetMouseButtonDown(0) && this.GetComponent<PlayerAnimController>().hasSword)
+        var animController = this.GetComponent<PlayerAnimController>();
+        var swordStats = this.gameObject.GetComponent<SwoirdStats>();
+
+        if (Input.GetMouseButtonDown(0) && animController.hasSword)
         {
-            this.GetComponent<PlayerAnimController>().AttackEvent();
+            animController.AttackEvent();   
 
             var enemyColliders = swordCollider.GetComponent<SwordCollider>().collidingObjects.Where(x => x.tag == "Enemy").ToList();
             foreach (var enemy in enemyColliders)
@@ -58,18 +64,18 @@ public class PlayerMovementHandler : MonoBehaviour
                 enemy.GetComponent<Killable>()?.TakeDamage();
 
                 Vector2 knockback = (facingRight) ? new Vector2(1, 1) : new Vector2(-1, 1);
-                enemy.GetComponent<Rigidbody2D>()?.AddForce(knockback * this.gameObject.GetComponent<SwoirdStats>().knockbackForce);
+                enemy.GetComponent<Rigidbody2D>()?.AddForce(knockback * swordStats.knockbackForce);
             }
         }
 
-        if (Input.GetMouseButtonDown(1) && this.GetComponent<PlayerAnimController>().hasSword)
+        if (Input.GetMouseButtonDown(1) && animController.hasSword)
         {
-            this.GetComponent<PlayerAnimController>().ThrowSword();
+            animController.ThrowSword();
             float width = this.GetComponent<Collider2D>().bounds.extents.x;
             Vector3 facingDirection = (facingRight) ? new Vector3(1, 0, 0) : new Vector3(-1, 0, 0);
 
             var spawnedSword = Instantiate(swordPrefab, this.transform.position + (facingDirection * 0.25f), this.transform.rotation);
-            spawnedSword.GetComponent<Rigidbody2D>().AddForce(facingDirection * ((50 * this.gameObject.GetComponent<SwoirdStats>().throwForce)));
+            spawnedSword.GetComponent<Rigidbody2D>().AddForce(facingDirection * ((50 * swordStats.throwForce)));
 
             if (!facingRight)
             {

@@ -12,18 +12,22 @@ public class BehaviorController : MonoBehaviour
     void Start()
     {
         activeBehaviors = new List<EnemyBehavior>();
+        removedBehaviors = new List<EnemyBehavior>();
         behaviors = new List<EnemyBehavior>(this.GetComponents<EnemyBehavior>());
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         foreach (var behaviour in behaviors)
         {
-            if (behaviour.CanEnterBehavior() && !activeBehaviors.Contains(behaviour))
+            if (behaviour.CanEnterBehavior())
             {
-                activeBehaviors.Add(behaviour);
-                behaviour.EnterState();
+                if (!activeBehaviors.Contains(behaviour))
+                {
+                    activeBehaviors.Add(behaviour);
+                    behaviour.EnterState();
+                }
             }
             else
             {
