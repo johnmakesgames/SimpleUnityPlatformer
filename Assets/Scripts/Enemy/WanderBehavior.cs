@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class WanderBehavior : MonoBehaviour, EnemyBehavior
 {
-    float movementSpeed = 10;
-    Vector2 movingDirection = new Vector2(1, 0);
-    EnemyInfo enemyInfo;
+    public float movementSpeed = 10;
+    public Vector2 movingDirection = new Vector2(1, 0);
+    public EnemyInfo enemyInfo;
 
     void Start()
     {
@@ -46,6 +46,10 @@ public class WanderBehavior : MonoBehaviour, EnemyBehavior
         RaycastHit2D hit = Physics2D.Raycast(new Vector2(transform.position.x + (enemyInfo.characterOffset * movingDirection.x), transform.position.y), movingDirection, enemyInfo.attackRange);
 
         if (hit.collider == null)
+        {
+            return true;
+        }
+        else if (hit.rigidbody == null)
         {
             return true;
         }

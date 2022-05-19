@@ -13,7 +13,11 @@ public class BehaviorController : MonoBehaviour
     {
         activeBehaviors = new List<EnemyBehavior>();
         removedBehaviors = new List<EnemyBehavior>();
-        behaviors = new List<EnemyBehavior>(this.GetComponents<EnemyBehavior>());
+
+        // For some reason Getcomponents is only returning one of the components wtf
+        var r = this.GetComponents(typeof(EnemyBehavior));
+        var result = this.GetComponents<EnemyBehavior>();
+        behaviors = new List<EnemyBehavior>(result);
     }
 
     // Update is called once per frame
